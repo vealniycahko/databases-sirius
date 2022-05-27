@@ -1,0 +1,31 @@
+﻿version: '3.5'
+
+services:
+  postgres:
+    container_name: postgres_db2022
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /pgdata_within_container
+    volumes:
+      - ./pgdata:/pgdata_within_container
+    ports:
+      - "38746:5432"
+  redis:
+    container_name: redis_db2022
+    image: redis
+    command: >
+      --requirepass redis
+    ports:
+      - "26596:6379"
+  mongo:
+    container_name: mongo_db2022
+    image: mongo
+    volumes:
+      - ./mongo_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: mongo
+    ports:
+      - "37112:27017"
