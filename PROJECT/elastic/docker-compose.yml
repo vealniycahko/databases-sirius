@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  elasticsearch:
+    container_name: elasticsearch_db2022
+    image: bitnami/elasticsearch:8.5.0
+    ports:
+      - "41554:9200"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  kibana:
+    container_name: kibana_db2022
+    image: bitnami/kibana:7.17.7
+    environment:
+      - KIBANA_ELASTICSEARCH_URL=host.docker.internal
+      - KIBANA_ELASTICSEARCH_PORT_NUMBER=41554
+    ports:
+      - "23699:5601"
+    depends_on:
+      - elasticsearch
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

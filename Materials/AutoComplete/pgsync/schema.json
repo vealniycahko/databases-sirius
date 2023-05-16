@@ -1,0 +1,181 @@
+[
+    {
+        "database": "postgres",
+        "index": "holder",
+        "nodes": {
+            "table": "holder",
+            "schema": "public",
+            "columns": [],
+            "transform": {
+                "mapping": {
+                    "id": {
+                        "type": "long"
+                    },
+                    "name": {
+                        "type": "keyword"
+                    },
+                    "phone": {
+                        "type": "keyword"
+                    }
+                }
+            },
+            "children": [
+                {
+                    "table": "storage_cell",
+                    "schema": "public",
+                    "columns": [],
+                    "transform": {
+                        "mapping": {
+                            "id": {
+                                "type": "long"
+                            },
+                            "code": {
+                                "type": "keyword"
+                            },
+                            "capacity": {
+                                "type": "long"
+                            }
+                        }
+                    },
+                    "relationship": {
+                        "variant": "object",
+                        "type": "one_to_many"
+                    }
+                },
+                {
+                    "table": "equipment",
+                    "schema": "public",
+                    "columns": [],
+                    "transform": {
+                        "mapping": {
+                            "id": {
+                                "type": "long"
+                            },
+                            "title": {
+                                "type": "keyword"
+                            },
+                            "color": {
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "relationship": {
+                        "variant": "object",
+                        "type": "one_to_many",
+                        "through_tables": ["equipment_to_holder"]
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "database": "postgres",
+        "index": "equipment",
+        "setting": {
+            "analysis": {
+                "filter": {
+                    "my_ngram_filter": {
+                        "type": "ngram"
+                    }
+                },
+                "analyzer": {
+                    "my_ngram_analyzer": {
+                        "type": "custom",
+                        "tokenizer": "standard",
+                        "filter": ["lowercase", "my_ngram_filter"]
+                    }
+                }
+            }
+        },
+        "nodes": {
+            "table": "equipment",
+            "schema": "public",
+            "columns": [],
+            "transform": {
+                "mapping": {
+                    "id": {
+                        "type": "long"
+                    },
+                    "title": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    },
+                    "color": {
+                        "type": "keyword"
+                    }
+                }
+            },
+            "children": [
+                {
+                    "table": "holder",
+                    "schema": "public",
+                    "columns": [],
+                    "transform": {
+                        "mapping": {
+                            "id": {
+                                "type": "long"
+                            },
+                            "name": {
+                                "type": "keyword"
+                            },
+                            "phone": {
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "relationship": {
+                        "variant": "object",
+                        "type": "one_to_many",
+                        "through_tables": ["equipment_to_holder"]
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "database": "postgres",
+        "index": "storage_cell",
+        "nodes": {
+            "table": "storage_cell",
+            "schema": "public",
+            "columns": ["id", "code", "capacity"],
+            "transform": {
+                "mapping": {
+                    "id": {
+                        "type": "long"
+                    },
+                    "code": {
+                        "type": "keyword"
+                    },
+                    "capacity": {
+                        "type": "long"
+                    }
+                }
+            },
+            "children": [
+                {
+                    "table": "holder",
+                    "schema": "public",
+                    "columns": [],
+                    "transform": {
+                        "mapping": {
+                            "id": {
+                                "type": "long"
+                            },
+                            "name": {
+                                "type": "keyword"
+                            },
+                            "phone": {
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "relationship": {
+                        "variant": "object",
+                        "type": "one_to_one"
+                    }
+                }
+            ]
+        }
+    }
+]

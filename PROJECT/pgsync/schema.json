@@ -1,0 +1,308 @@
+[
+    {
+        "database": "postgres",
+        "index": "worker",
+        "setting": {
+            "analysis": {
+                "filter": {
+                    "my_ngram_filter": {
+                        "type": "ngram"
+                    }
+                },
+                "analyzer": {
+                    "my_ngram_analyzer": {
+                        "type": "custom",
+                        "tokenizer": "standard",
+                        "filter": ["lowercase", "my_ngram_filter"]
+                    }
+                }
+            }
+        },
+        "nodes": {
+            "table": "worker",
+            "schema": "public",
+            "transform": {
+                "mapping": {
+                    "id": {
+                        "type": "keyword"
+                    },
+                    "f_name": {
+                        "type": "text",
+                        "analyzer": "my_ngram_analyzer"
+                    },
+                    "s_name": {
+                        "type": "keyword"
+                    },
+                    "age": {
+                        "type": "long"
+                    },
+                    "education": {
+                        "type": "keyword"
+                    },
+                    "info": {
+                        "type": "nested",
+                        "properties": {
+                            "company": {
+                            "type": "keyword"
+                            },
+                            "position": {
+                            "type": "keyword"
+                            },
+                            "work_since": {
+                            "type": "long"
+                            }
+                        }
+                    }
+                }
+            },
+            "children": [
+                {
+                    "table": "document",
+                    "schema": "public",
+                    "transform": {
+                        "mapping": {
+                            "id": {
+                                "type": "keyword"
+                            },
+                            "type": {
+                                "type": "keyword"
+                            },
+                            "information": {
+                                "type": "text"
+                            },
+                            "worker_id": {
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "relationship": {
+                        "variant": "object",
+                        "type": "one_to_many",
+                        "foreign_key": {
+                            "child": ["worker_id"],
+                            "parent": ["id"]
+                        }
+                    }
+                },
+                {
+                    "table": "company",
+                    "schema": "public",
+                    "transform": {
+                        "mapping": {
+                            "id": {
+                                "type": "keyword"
+                            },
+                            "title": {
+                                "type": "keyword"
+                            },
+                            "founded": {
+                                "type": "keyword"
+                            },
+                            "field": {
+                                "type": "keyword"
+                            },
+                            "office": {
+                                "type": "keyword"
+                            },
+                            "affiliates": {
+                                "type": "keyword"
+                            },
+                            "enterprise_value": {
+                                "type": "long"
+                            }
+                        }
+                    },
+                    "relationship": {
+                        "variant": "object",
+                        "type": "one_to_many",
+                        "through_tables": ["company_worker"]
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "database": "postgres",
+        "index": "company",
+        "setting": {
+            "analysis": {
+                "filter": {
+                    "english_stop": {
+                        "type": "stop",
+                        "stopwords": "_english_"
+                    },
+                    "english_stemmer": {
+                        "type": "stemmer",
+                        "language": "english"
+                    },
+                    "my_synonym": {
+                        "type": "synonym",
+                        "synonyms": [
+                            "coppa-coulla => cola",
+                            "moov => move",
+                            "moov => muv",
+                            "herb => grass",
+                            "herb => plant"
+                        ]
+                    }
+                },
+                "analyzer": {
+                    "title_analyzer": {
+                        "tokenizer": "standard",
+                        "filter": [
+                            "lowercase",
+                            "english_stop",
+                            "english_stemmer",
+                            "my_synonym"
+                        ]
+                    }
+                }
+            }
+        },
+        "nodes": {
+            "table": "company",
+            "schema": "public",
+            "transform": {
+                "mapping": {
+                    "id": {
+                        "type": "keyword"
+                    },
+                    "title": {
+                        "type": "text",
+                        "analyzer": "title_analyzer"
+                    },
+                    "founded": {
+                        "type": "keyword"
+                    },
+                    "field": {
+                        "type": "keyword"
+                    },
+                    "office": {
+                        "type": "keyword"
+                    },
+                    "affiliates": {
+                        "type": "keyword"
+                    },
+                    "enterprise_value": {
+                        "type": "long"
+                    }
+                }
+            },
+            "children": [
+                {
+                    "table": "worker",
+                    "schema": "public",
+                    "transform": {
+                        "mapping": {
+                            "id": {
+                                "type": "keyword"
+                            },
+                            "f_name": {
+                                "type": "keyword"
+                            },
+                            "s_name": {
+                                "type": "keyword"
+                            },
+                            "age": {
+                                "type": "long"
+                            },
+                            "education": {
+                                "type": "keyword"
+                            },
+                            "info": {
+                                "type": "nested",
+                                "properties": {
+                                    "company": {
+                                    "type": "keyword"
+                                    },
+                                    "position": {
+                                    "type": "keyword"
+                                    },
+                                    "work_since": {
+                                    "type": "long"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "relationship": {
+                        "variant": "object",
+                        "type": "one_to_many",
+                        "through_tables": ["company_worker"]
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "database": "postgres",
+        "index": "document",
+        "nodes": {
+            "table": "document",
+            "schema": "public",
+            "transform": {
+                "mapping": {
+                    "id": {
+                        "type": "keyword"
+                    },
+                    "type": {
+                        "type": "keyword"
+                    },
+                    "information": {
+                        "type": "text"
+                    },
+                    "worker_id": {
+                        "type": "keyword"
+                    }
+                }
+            },
+            "children": [
+                {
+                    "table": "worker",
+                    "schema": "public",
+                    "transform": {
+                        "mapping": {
+                            "id": {
+                                "type": "keyword"
+                            },
+                            "f_name": {
+                                "type": "keyword"
+                            },
+                            "s_name": {
+                                "type": "keyword"
+                            },
+                            "age": {
+                                "type": "long"
+                            },
+                            "education": {
+                                "type": "keyword"
+                            },
+                            "info": {
+                                "type": "nested",
+                                "properties": {
+                                    "company": {
+                                    "type": "keyword"
+                                    },
+                                    "position": {
+                                    "type": "keyword"
+                                    },
+                                    "work_since": {
+                                    "type": "long"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "relationship": {
+                        "variant": "object",
+                        "type": "one_to_one",
+                        "foreign_key": {
+                            "child": ["id"],
+                            "parent": ["worker_id"]
+                        }
+                    }
+                }
+            ]
+        }
+    }
+]

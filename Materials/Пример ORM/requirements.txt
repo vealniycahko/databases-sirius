@@ -1,0 +1,5 @@
+flask==2.1.2
+redis==4.2.2
+SQLAlchemy==1.4.36
+SQLAlchemy-serializer==1.4.1
+psycopg2-binary==2.9.3
