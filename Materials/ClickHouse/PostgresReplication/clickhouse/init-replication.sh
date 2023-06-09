@@ -1,2 +1,0 @@
-# значения в connection string: https://clickhouse.com/docs/en/integrations/postgresql/postgres-with-clickhouse-database-engine/#2-in-clickhouse
-clickhouse-client --user clickhouse --password clickhouse --allow_experimental_database_materialized_postgresql 1 --query "create database if not exists postgres_repl engine = MaterializedPostgreSQL('postgres:5432', 'postgres', 'postgres', 'postgres') settings materialized_postgresql_tables_list = 'holder,equipment,equipment_to_holder,storage_cell';"
